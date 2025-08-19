@@ -25,7 +25,15 @@ export class VeiculoController {
       const { marca, modelo, ano, cor, preco, descricao } = req.body;
 
       // Validações básicas
-      if (!marca || !modelo || !ano || !cor || !preco) {
+      if (!marca) {
+        res.status(400).json({ 
+          success: false,
+          message: 'Marca é obrigatória'
+        });
+        return;
+      }
+
+      if (!modelo || !ano || !cor || !preco) {
         res.status(400).json({ 
           error: 'Dados obrigatórios faltando',
           details: 'Marca, modelo, ano, cor e preço são obrigatórios'
@@ -42,11 +50,16 @@ export class VeiculoController {
         descricao
       });
 
-      res.status(201).json(result);
+      res.status(201).json({
+        success: true,
+        data: result,
+        message: 'Veículo cadastrado com sucesso'
+      });
     } catch (error: any) {
       console.error('Erro ao cadastrar veículo:', error);
-      res.status(400).json({ 
-        error: error.message || 'Erro ao cadastrar veículo'
+      res.status(500).json({ 
+        success: false,
+        message: 'Erro interno do servidor'
       });
     }
   }
@@ -93,23 +106,14 @@ export class VeiculoController {
       const result = await this.consultarVeiculoUseCase.listarComFiltros(filtros);
       
       res.status(200).json({
-        total: result.length,
-        filtros: {
-          marca: filtros.marca,
-          modelo: filtros.modelo,
-          anoMin: filtros.anoMin,
-          anoMax: filtros.anoMax,
-          precoMin: filtros.precoMin,
-          precoMax: filtros.precoMax,
-          status: statusFiltro || 'Todos disponíveis',
-          ordem: ordemValida || 'Sem ordenação'
-        },
-        veiculos: result
+        success: true,
+        data: result
       });
     } catch (error: any) {
       console.error('Erro ao listar veículos:', error);
       res.status(500).json({ 
-        error: error.message || 'Erro ao listar veículos'
+        success: false,
+        message: 'Erro ao listar veículos'
       });
     }
   }
@@ -120,7 +124,8 @@ export class VeiculoController {
 
       if (!id) {
         res.status(400).json({ 
-          error: 'ID do veículo é obrigatório'
+          success: false,
+          message: 'ID do veículo é obrigatório'
         });
         return;
       }
@@ -129,16 +134,21 @@ export class VeiculoController {
       
       if (!result) {
         res.status(404).json({ 
-          error: 'Veículo não encontrado'
+          success: false,
+          message: 'Veículo não encontrado'
         });
         return;
       }
 
-      res.status(200).json(result);
+      res.status(200).json({
+        success: true,
+        data: result
+      });
     } catch (error: any) {
       console.error('Erro ao buscar veículo:', error);
       res.status(500).json({ 
-        error: error.message || 'Erro ao buscar veículo'
+        success: false,
+        message: 'Erro ao buscar veículo'
       });
     }
   }
@@ -150,7 +160,8 @@ export class VeiculoController {
 
       if (!id) {
         res.status(400).json({ 
-          error: 'ID do veículo é obrigatório'
+          success: false,
+          message: 'ID do veículo é obrigatório'
         });
         return;
       }
@@ -164,11 +175,25 @@ export class VeiculoController {
         descricao
       });
 
-      res.status(200).json(result);
+      res.status(200).json({
+        success: true,
+        data: result,
+        message: 'Veículo atualizado com sucesso'
+      });
     } catch (error: any) {
       console.error('Erro ao atualizar veículo:', error);
-      res.status(400).json({ 
-        error: error.message || 'Erro ao atualizar veículo'
+      
+      if (error.message?.includes('não encontrado')) {
+        res.status(404).json({ 
+          success: false,
+          message: 'Veículo não encontrado'
+        });
+        return;
+      }
+
+      res.status(500).json({ 
+        success: false,
+        message: 'Erro interno do servidor'
       });
     }
   }

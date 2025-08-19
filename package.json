@@ -10,9 +10,15 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:ci": "jest --coverage --watchAll=false --passWithNoTests",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "seed": "ts-node src/infrastructure/database/seed.ts"
+    "type-check": "tsc --noEmit",
+    "validate": "npm run type-check && npm run lint && npm run test:ci",
+    "prepare": "npm run build",
+    "seed": "ts-node src/infrastructure/database/seed.ts",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
   },
   "keywords": [
     "vehicles",

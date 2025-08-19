@@ -12,10 +12,34 @@ export interface AuthenticatedRequest extends Request {
 
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const authHeader = req.header('Authorization');
+
+    if (!authHeader || authHeader.trim() === '') {
+      res.status(401).json({ 
+        success: false,
+        message: 'Token de acesso não fornecido' 
+      });
+      return;
+    }
+
+    const trimmedHeader = authHeader.trim();
+    
+    // Verificar se o formato é Bearer token
+    if (!trimmedHeader.startsWith('Bearer ')) {
+      res.status(401).json({ 
+        success: false,
+        message: 'Formato de token inválido' 
+      });
+      return;
+    }
+
+    const token = trimmedHeader.replace('Bearer ', '').trim();
 
     if (!token) {
-      res.status(401).json({ error: 'Token de acesso não fornecido' });
+      res.status(401).json({ 
+        success: false,
+        message: 'Token de acesso não fornecido' 
+      });
       return;
     }
 
@@ -29,19 +53,45 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
     };
 
     next();
-  } catch (error) {
-    res.status(401).json({ error: 'Token inválido' });
+  } catch (error: any) {
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ 
+        success: false,
+        message: 'Token expirado' 
+      });
+      return;
+    }
+    
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ 
+        success: false,
+        message: 'Token inválido' 
+      });
+      return;
+    }
+
+    // Outros erros JWT
+    res.status(500).json({ 
+      success: false,
+      message: 'Erro interno de autenticação' 
+    });
   }
 };
 
 export const adminMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   if (!req.user) {
-    res.status(401).json({ error: 'Usuário não autenticado' });
+    res.status(401).json({ 
+      success: false,
+      message: 'Usuário não autenticado' 
+    });
     return;
   }
 
   if (req.user.tipo !== TipoUsuario.ADMIN) {
-    res.status(403).json({ error: 'Acesso negado. Apenas administradores podem acessar este recurso' });
+    res.status(403).json({ 
+      success: false,
+      message: 'Acesso negado. Apenas administradores podem acessar este recurso' 
+    });
     return;
   }
 
