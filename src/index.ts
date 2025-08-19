@@ -9,6 +9,7 @@ import { swaggerUi, specs } from './infrastructure/swagger/swagger';
 import authRoutes from './infrastructure/http/routes/authRoutes';
 import veiculoRoutes from './infrastructure/http/routes/veiculoRoutes';
 import webhookRoutes from './infrastructure/http/routes/webhookRoutes';
+import { Logger } from './utils/logger';
 
 dotenv.config();
 

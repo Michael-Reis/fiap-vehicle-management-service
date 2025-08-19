@@ -24,8 +24,9 @@ export class DatabaseSeed {
         return;
       }
 
-      // Criar hash da senha
-      const senhaHash = await bcrypt.hash('123456789', 10);
+      // Gerar senha aleatória para admin inicial
+      const senhaTemporaria = this.gerarSenhaSegura();
+      const senhaHash = await bcrypt.hash(senhaTemporaria, 10);
 
       // Inserir admin inicial
       await this.db.query(
@@ -41,12 +42,22 @@ export class DatabaseSeed {
 
       console.log('Admin inicial criado com sucesso!');
       console.log('Email: admin@admin.com.br');
-      console.log('Senha: 123456789');
+      console.log(`Senha temporária: ${senhaTemporaria}`);
+      console.log('⚠️  IMPORTANTE: Altere esta senha no primeiro login!');
       
     } catch (error) {
       console.error('Erro ao criar admin inicial:', error);
       throw error;
     }
+  }
+
+  private gerarSenhaSegura(): string {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let senha = '';
+    for (let i = 0; i < 12; i++) {
+      senha += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return senha;
   }
 
   async executar(): Promise<void> {
