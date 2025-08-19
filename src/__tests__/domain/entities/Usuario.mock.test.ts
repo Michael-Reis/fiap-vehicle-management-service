@@ -1,3 +1,5 @@
+import { describe, it, expect } from '@jest/globals';
+
 /**
  * Testes simulados da entidade Usuario
  * Estes testes validam a lógica que será implementada na entidade real
