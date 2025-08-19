@@ -26,8 +26,6 @@ Thumbs.db
 # VS Code
 .vscode/
 
-# Others
-coverage/
 
 # XAMPP
 xampp/
