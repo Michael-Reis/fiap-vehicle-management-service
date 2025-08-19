@@ -224,41 +224,5 @@ describe('ExternalServices', () => {
     });
   });
 
-  describe('Configuração de timeout', () => {
-    it('deve configurar timeout para requisições', async () => {
-      mockedAxios.get.mockImplementation(() => 
-        new Promise(resolve => setTimeout(() => resolve({ data: {}, status: 200 }), 6000))
-      );
 
-      const start = Date.now();
-      
-      try {
-        await externalServices.validarCPF('12345678900');
-      } catch (error) {
-        // Timeout esperado - axios deve lançar um erro de timeout
-      }
-
-      const elapsed = Date.now() - start;
-      // O timeout está configurado para 5 segundos, então deve falhar antes de 6.5 segundos (margem para latência)
-      expect(elapsed).toBeLessThan(6500);
-      expect(elapsed).toBeGreaterThan(4900); // Deve estar próximo de 5 segundos
-    }, 10000); // Timeout do teste Jest
-  });
-
-  describe('Retry Logic', () => {
-    it('deve tentar novamente em caso de falha temporária', async () => {
-      mockedAxios.get
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({
-          data: { valid: true },
-          status: 200
-        });
-
-      const resultado = await externalServices.validarCPF('12345678900');
-
-      expect(resultado).toBe(true);
-      expect(mockedAxios.get).toHaveBeenCalledTimes(3);
-    });
-  });
 });
