@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export enum TipoUsuario {
   ADMIN = 'ADMIN',
   CLIENTE = 'CLIENTE'
@@ -47,9 +49,8 @@ export class Usuario {
   }
 
   private generateId(): string {
-    return `usr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `usr_${uuidv4()}`;
   }
-
   private validate(): void {
     if (!this._nome || this._nome.trim().length < 2) {
       throw new Error('Nome deve ter pelo menos 2 caracteres');
@@ -71,14 +72,24 @@ export class Usuario {
     }
   }
 
+
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    try {
+      const [local, domain] = email.split('@');
+      if (!local || !domain) return false;
+      if (local.length < 1 || domain.length < 3) return false;
+      if (!domain.includes('.')) return false;
+      if (domain.startsWith('.') || domain.endsWith('.')) return false;
+      return true;
+    } catch {
+      return false;
+    }
   }
+
 
   private isValidCPF(cpf: string): boolean {
     const cleanCPF = cpf.replace(/[^\d]/g, '');
-    
+
     if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
       return false;
     }
@@ -121,7 +132,7 @@ export class Usuario {
     if (props.cpf !== undefined) this._cpf = props.cpf;
     if (props.telefone !== undefined) this._telefone = props.telefone;
     if (props.endereco !== undefined) this._endereco = props.endereco;
-    
+
     this._updatedAt = new Date();
     this.validate();
   }
@@ -130,7 +141,7 @@ export class Usuario {
     if (!novaSenha || novaSenha.length < 6) {
       throw new Error('Nova senha deve ter pelo menos 6 caracteres');
     }
-    
+
     this._senha = novaSenha;
     this._updatedAt = new Date();
   }

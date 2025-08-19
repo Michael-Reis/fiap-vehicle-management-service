@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export enum StatusVeiculo {
   A_VENDA = 'A_VENDA',
   VENDIDO = 'VENDIDO',
@@ -53,7 +55,8 @@ export class Veiculo {
   }
 
   private generateId(): string {
-    return `veh_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return `veh_${uuidv4()}`;
   }
 
   private validate(): void {
@@ -85,7 +88,7 @@ export class Veiculo {
 
   private isValidCPF(cpf: string): boolean {
     const cleanCPF = cpf.replace(/[^\d]/g, '');
-    
+
     if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
       return false;
     }
@@ -128,7 +131,7 @@ export class Veiculo {
     if (props.ano !== undefined) this._ano = props.ano;
     if (props.cor !== undefined) this._cor = props.cor;
     if (props.preco !== undefined) this._preco = props.preco;
-    
+
     this._updatedAt = new Date();
     this.validate();
   }
@@ -143,7 +146,7 @@ export class Veiculo {
     this._dataVenda = new Date();
     this._codigoPagamento = codigoPagamento;
     this._updatedAt = new Date();
-    
+
     this.validate();
   }
 
@@ -156,7 +159,7 @@ export class Veiculo {
     this._cpfComprador = cpfComprador;
     this._codigoPagamento = codigoPagamento;
     this._updatedAt = new Date();
-    
+
     this.validate();
   }
 

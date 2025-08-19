@@ -128,5 +128,85 @@ describe('EditarVeiculoUseCase', () => {
         .rejects
         .toThrow('Erro no banco de dados');
     });
+
+    it('deve editar apenas os campos especificados (marca e modelo)', async () => {
+      const veiculoExistente = new Veiculo({
+        id: 'veh_123',
+        marca: 'Honda',
+        modelo: 'Civic',
+        ano: 2020,
+        cor: 'Branco',
+        preco: 85000,
+        status: StatusVeiculo.A_VENDA
+      });
+
+      const veiculoEditado = new Veiculo({
+        id: 'veh_123',
+        marca: 'Toyota',
+        modelo: 'Corolla',
+        ano: 2020,
+        cor: 'Branco',
+        preco: 85000,
+        status: StatusVeiculo.A_VENDA,
+        updatedAt: new Date()
+      });
+
+      const inputParcial = {
+        marca: 'Toyota',
+        modelo: 'Corolla'
+      };
+
+      mockVeiculoRepository.buscarPorId.mockResolvedValue(veiculoExistente);
+      mockVeiculoRepository.atualizar.mockResolvedValue(veiculoEditado);
+
+      const result = await editarVeiculoUseCase.execute('veh_123', inputParcial);
+
+      expect(result.marca).toBe('Toyota');
+      expect(result.modelo).toBe('Corolla');
+      expect(mockVeiculoRepository.atualizar).toHaveBeenCalledWith('veh_123', { 
+        marca: 'Toyota', 
+        modelo: 'Corolla' 
+      });
+    });
+
+    it('deve editar apenas o ano e cor', async () => {
+      const veiculoExistente = new Veiculo({
+        id: 'veh_123',
+        marca: 'Honda',
+        modelo: 'Civic',
+        ano: 2020,
+        cor: 'Branco',
+        preco: 85000,
+        status: StatusVeiculo.A_VENDA
+      });
+
+      const veiculoEditado = new Veiculo({
+        id: 'veh_123',
+        marca: 'Honda',
+        modelo: 'Civic',
+        ano: 2022,
+        cor: 'Preto',
+        preco: 85000,
+        status: StatusVeiculo.A_VENDA,
+        updatedAt: new Date()
+      });
+
+      const inputParcial = {
+        ano: 2022,
+        cor: 'Preto'
+      };
+
+      mockVeiculoRepository.buscarPorId.mockResolvedValue(veiculoExistente);
+      mockVeiculoRepository.atualizar.mockResolvedValue(veiculoEditado);
+
+      const result = await editarVeiculoUseCase.execute('veh_123', inputParcial);
+
+      expect(result.ano).toBe(2022);
+      expect(result.cor).toBe('Preto');
+      expect(mockVeiculoRepository.atualizar).toHaveBeenCalledWith('veh_123', { 
+        ano: 2022, 
+        cor: 'Preto' 
+      });
+    });
   });
 });

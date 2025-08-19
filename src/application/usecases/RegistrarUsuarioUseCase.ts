@@ -21,6 +21,23 @@ export class RegistrarUsuarioUseCase {
   constructor(private usuarioRepository: UsuarioRepository) {}
 
   async execute(input: RegistrarUsuarioInput): Promise<RegistrarUsuarioOutput> {
+    // Validar entrada
+    if (!input.nome || input.nome.trim().length < 2) {
+      throw new Error('Nome deve ter pelo menos 2 caracteres');
+    }
+
+    if (!input.email || !this.isValidEmail(input.email)) {
+      throw new Error('Email inválido');
+    }
+
+    if (!input.senha || input.senha.length < 6) {
+      throw new Error('Senha deve ter pelo menos 6 caracteres');
+    }
+
+    if (!input.tipo || Object.values(TipoUsuario).indexOf(input.tipo) === -1) {
+      throw new Error('Tipo de usuário é obrigatório');
+    }
+
     // Validar se email já existe
     const emailExiste = await this.usuarioRepository.existePorEmail(input.email);
     if (emailExiste) {
@@ -57,5 +74,18 @@ export class RegistrarUsuarioUseCase {
       usuario: usuarioSalvo.toSafeJSON(),
       message: 'Usuário registrado com sucesso'
     };
+  }
+
+  private isValidEmail(email: string): boolean {
+    try {
+      const [local, domain] = email.split('@');
+      if (!local || !domain) return false;
+      if (local.length < 1 || domain.length < 3) return false;
+      if (!domain.includes('.')) return false;
+      if (domain.startsWith('.') || domain.endsWith('.')) return false;
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

@@ -224,5 +224,90 @@ describe('ExternalServices', () => {
     });
   });
 
+  describe('validarEmail', () => {
+    it('deve validar email válido', async () => {
+      mockedAxios.get.mockResolvedValue({
+        data: { valid: true },
+        status: 200
+      });
 
+      const resultado = await externalServices.validarEmail('test@example.com');
+
+      expect(resultado).toBe(true);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        expect.stringContaining('validar-email/test@example.com')
+      );
+    });
+
+    it('deve invalidar email inválido', async () => {
+      mockedAxios.get.mockResolvedValue({
+        data: { valid: false },
+        status: 200
+      });
+
+      const resultado = await externalServices.validarEmail('invalid-email');
+
+      expect(resultado).toBe(false);
+    });
+
+    it('deve tratar erro de serviço de email', async () => {
+      mockedAxios.get.mockRejectedValue(new Error('Service unavailable'));
+
+      const resultado = await externalServices.validarEmail('test@example.com');
+
+      expect(resultado).toBe(false);
+    });
+  });
+
+  describe('makeRequest', () => {
+    it('deve fazer requisição GET com sucesso', async () => {
+      const responseData = { data: 'test' };
+      mockedAxios.get.mockResolvedValue({
+        data: responseData,
+        status: 200
+      });
+
+      const result = await (externalServices as any).makeRequest('get', 'http://test.com', null, {});
+
+      expect(result.data).toEqual(responseData);
+      expect(result.status).toBe(200);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'http://test.com',
+        expect.objectContaining({
+          timeout: 5000,
+          headers: {}
+        })
+      );
+    });
+
+    it('deve fazer requisição POST com sucesso', async () => {
+      const postData = { test: 'data' };
+      const responseData = { success: true };
+      mockedAxios.post.mockResolvedValue({
+        data: responseData,
+        status: 200
+      });
+
+      const result = await (externalServices as any).makeRequest('post', 'http://test.com', postData, {});
+
+      expect(result.data).toEqual(responseData);
+      expect(result.status).toBe(200);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        'http://test.com',
+        postData,
+        expect.objectContaining({
+          timeout: 5000,
+          headers: {}
+        })
+      );
+    });
+
+    it('deve propagar erro de requisição', async () => {
+      mockedAxios.get.mockRejectedValue(new Error('Network error'));
+
+      await expect((externalServices as any).makeRequest('get', 'http://test.com', null, {}))
+        .rejects
+        .toThrow('Network error');
+    });
+  });
 });

@@ -1,4 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Testes simulados da entidade Usuario
@@ -55,7 +56,7 @@ class MockUsuario {
   }
 
   private generateId(): string {
-    return `usr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `usr_${uuidv4()}`;
   }
 
   private validate(): void {
@@ -81,8 +82,16 @@ class MockUsuario {
   }
 
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    try {
+      const [local, domain] = email.split('@');
+      if (!local || !domain) return false;
+      if (local.length < 1 || domain.length < 3) return false;
+      if (!domain.includes('.')) return false;
+      if (domain.startsWith('.') || domain.endsWith('.')) return false;
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private isValidCPF(cpf: string): boolean {
