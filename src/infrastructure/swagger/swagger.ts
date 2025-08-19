@@ -11,11 +11,11 @@ const options: swaggerJSDoc.Options = {
         API para gestão de veículos do sistema de revenda automotiva.
         
         ## Funcionalidades
-        - 🚗 Cadastro e gestão de veículos
-        - 📝 Edição de dados dos veículos  
-        - 🔄 Controle de status (disponível/vendido)
-        - 📡 Webhooks de pagamento
-        - 🔍 Consultas de disponibilidade
+        - Cadastro e gestão de veículos
+        - Edição de dados dos veículos  
+        - Controle de status (disponível/vendido)
+        - Webhooks de pagamento
+        - Consultas de disponibilidade
         
         ## Arquitetura
         Este serviço utiliza **Arquitetura Hexagonal** (Clean Architecture) com **TypeScript** e **Express.js**.

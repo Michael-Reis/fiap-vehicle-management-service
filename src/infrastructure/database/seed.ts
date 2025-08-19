@@ -39,12 +39,12 @@ export class DatabaseSeed {
         ]
       );
 
-      console.log('✅ Admin inicial criado com sucesso!');
-      console.log('📧 Email: admin@admin.com.br');
-      console.log('🔑 Senha: 123456789');
+      console.log('Admin inicial criado com sucesso!');
+      console.log('Email: admin@admin.com.br');
+      console.log('Senha: 123456789');
       
     } catch (error) {
-      console.error('❌ Erro ao criar admin inicial:', error);
+      console.error('Erro ao criar admin inicial:', error);
       throw error;
     }
   }
@@ -54,9 +54,9 @@ export class DatabaseSeed {
     
     try {
       await this.criarAdminInicial();
-      console.log('✅ Seed executado com sucesso!');
+      console.log('Seed executado com sucesso!');
     } catch (error) {
-      console.error('❌ Erro durante o seed:', error);
+      console.error('Erro durante o seed:', error);
       process.exit(1);
     }
   }
