@@ -1,6 +1,7 @@
 import { DatabaseConnection } from './DatabaseConnection';
 import * as bcrypt from 'bcrypt';
 import { TipoUsuario } from '../../domain/entities/Usuario';
+import { randomBytes } from 'crypto';
 
 export class DatabaseSeed {
   private db: DatabaseConnection;
@@ -51,11 +52,18 @@ export class DatabaseSeed {
     }
   }
 
+  /**
+   * Gera uma senha segura usando gerador criptográfico
+   * Substitui Math.random() por crypto.randomBytes para segurança
+   */
   private gerarSenhaSegura(): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
     let senha = '';
+    const randomBytesArray = randomBytes(12); // Gera 12 bytes criptograficamente seguros
+    
     for (let i = 0; i < 12; i++) {
-      senha += charset.charAt(Math.floor(Math.random() * charset.length));
+      // Usa bytes seguros em vez de Math.random()
+      senha += charset.charAt(randomBytesArray[i] % charset.length);
     }
     return senha;
   }

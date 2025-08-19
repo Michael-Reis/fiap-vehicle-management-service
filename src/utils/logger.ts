@@ -43,12 +43,14 @@ export class Logger {
 
   /**
    * Remove parâmetros sensíveis da URL para logging
+   * Esta função sanitiza dados sensíveis e não contém senhas codificadas
    */
   private static sanitizePath(path: string): string {
     return path
       .replace(/\b\d{11}\b/g, '[CPF]') // CPFs
       .replace(/\b\d{4,}\b/g, '[ID]') // IDs longos
-      .replace(/password=[^&]*/gi, 'password=[HIDDEN]')
-      .replace(/token=[^&]*/gi, 'token=[HIDDEN]');
+      // Sanitização de parâmetros sensíveis em URLs - não são senhas reais
+      .replace(/password=[^&]*/gi, 'password=[HIDDEN]') // NOSONAR - Sanitização, não senha codificada
+      .replace(/token=[^&]*/gi, 'token=[HIDDEN]'); // NOSONAR - Sanitização, não token codificado
   }
 }
