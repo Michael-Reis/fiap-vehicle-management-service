@@ -14,15 +14,16 @@ import { Logger } from './utils/logger';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
+
+
 
 app.use(helmet());
 app.use(cors(
   {
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: '*', // Permitir todas as origens (ajustar conforme necessário)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
   }
 ));
 

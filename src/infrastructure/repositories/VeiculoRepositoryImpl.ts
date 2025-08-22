@@ -9,6 +9,26 @@ export class VeiculoRepositoryImpl implements VeiculoRepository {
     this.db = DatabaseConnection.getInstance();
   }
 
+  /**
+   * Converte dados do banco de dados para o formato esperado pela entidade Veiculo
+   */
+  private mapRowToVeiculo(row: any): Veiculo {
+    return new Veiculo({
+      id: row.id,
+      marca: row.marca,
+      modelo: row.modelo,
+      ano: parseInt(row.ano),
+      cor: row.cor,
+      preco: parseFloat(row.preco),
+      status: row.status as StatusVeiculo,
+      cpfComprador: row.cpf_comprador,
+      dataVenda: row.data_venda,
+      codigoPagamento: row.codigo_pagamento,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }, true); // Pular validação ao carregar do banco
+  }
+
   async salvar(veiculo: Veiculo): Promise<Veiculo> {
     const sql = `
       INSERT INTO veiculos (id, marca, modelo, ano, cor, preco, status, cpf_comprador, data_venda, codigo_pagamento)
@@ -41,40 +61,14 @@ export class VeiculoRepositoryImpl implements VeiculoRepository {
     }
 
     const row = rows[0];
-    return new Veiculo({
-      id: row.id,
-      marca: row.marca,
-      modelo: row.modelo,
-      ano: row.ano,
-      cor: row.cor,
-      preco: row.preco,
-      status: row.status as StatusVeiculo,
-      cpfComprador: row.cpf_comprador,
-      dataVenda: row.data_venda,
-      codigoPagamento: row.codigo_pagamento,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at
-    }, true); // Pular validação ao carregar do banco
+    return this.mapRowToVeiculo(row);
   }
 
   async buscarTodos(): Promise<Veiculo[]> {
     const sql = 'SELECT * FROM veiculos ORDER BY preco ASC';
     const rows = await this.db.query(sql);
     
-    return rows.map((row: any) => new Veiculo({
-      id: row.id,
-      marca: row.marca,
-      modelo: row.modelo,
-      ano: row.ano,
-      cor: row.cor,
-      preco: row.preco,
-      status: row.status as StatusVeiculo,
-      cpfComprador: row.cpf_comprador,
-      dataVenda: row.data_venda,
-      codigoPagamento: row.codigo_pagamento,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at
-    }, true)); // Pular validação ao carregar do banco
+    return rows.map((row: any) => this.mapRowToVeiculo(row));
   }
 
   async buscarPorStatus(status: StatusVeiculo): Promise<Veiculo[]> {

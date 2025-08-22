@@ -29,11 +29,15 @@ export class DatabaseSeed {
       const senhaTemporaria = this.gerarSenhaSegura();
       const senhaHash = await bcrypt.hash(senhaTemporaria, 10);
 
+      const id = 'admin_' + new Date().getTime(); // Gera um ID único baseado no timestamp  
+
+
       // Inserir admin inicial
       await this.db.query(
-        `INSERT INTO usuarios (nome, email, senha, tipo, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, NOW(), NOW())`,
+        `INSERT INTO usuarios (id, nome, email, senha, tipo, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
         [
+          id,
           'Administrador Sistema',
           'admin@admin.com.br',
           senhaHash,
