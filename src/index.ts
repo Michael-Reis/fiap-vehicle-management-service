@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 app.use(cors(
   {
-    origin: '*', // Permitir todas as origens (ajustar conforme necessário)
+    origin: process.env.origins || '*', // Permitir todas as origens (ajustar conforme necessário)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }
