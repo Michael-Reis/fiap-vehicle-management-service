@@ -4,7 +4,7 @@ export class DatabaseConnection {
   private static instance: DatabaseConnection;
   private connection: mysql.Connection | null = null;
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstance(): DatabaseConnection {
     if (!DatabaseConnection.instance) {
@@ -23,7 +23,7 @@ export class DatabaseConnection {
         port: parseInt(process.env.DB_PORT || '3306'),
         charset: 'utf8mb4'
       });
-      
+
       console.log('Conectado ao banco MySQL do serviço principal');
     } catch (error) {
       console.error('Erro ao conectar no MySQL:', error);
@@ -100,16 +100,11 @@ export class DatabaseConnection {
 
     await this.execute(createUsuariosTable);
     await this.execute(createVeiculosTable);
-    
+
     // Migração: Alterar tamanho das colunas id se necessário
-    try {
-      await this.execute('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
-      await this.execute('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
-    } catch (error) {
-      // Ignora erros se as colunas já estiverem no tamanho correto
-      console.log('Migração de colunas id já aplicada ou não necessária');
-    }
-    
+    await this.execute('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
+    await this.execute('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
+
     console.log('Schema do banco de dados MySQL inicializado');
   }
 }
