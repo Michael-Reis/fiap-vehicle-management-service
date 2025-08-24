@@ -45,7 +45,8 @@ export class LoginUseCase {
     const payload = {
       userId: usuario.id,
       email: usuario.email,
-      tipo: usuario.tipo
+      tipo: usuario.tipo,
+      cpf: usuario.cpf
     };
     const options: jwt.SignOptions = {
       expiresIn: 200000
