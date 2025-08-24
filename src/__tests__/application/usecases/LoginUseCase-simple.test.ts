@@ -169,7 +169,8 @@ describe('LoginUseCase', () => {
         {
           userId: 'user_123',
           email: 'joao@email.com',
-          tipo: TipoUsuario.ADMIN
+          tipo: TipoUsuario.ADMIN,
+          cpf: '12345678909'
         },
         'test_secret',
         { expiresIn: 200000 }
