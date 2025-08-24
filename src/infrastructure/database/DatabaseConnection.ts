@@ -59,7 +59,7 @@ export class DatabaseConnection {
     // Tabela de usuários
     const createUsuariosTable = `
       CREATE TABLE IF NOT EXISTS usuarios (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
@@ -79,7 +79,7 @@ export class DatabaseConnection {
     // Tabela de veículos
     const createVeiculosTable = `
       CREATE TABLE IF NOT EXISTS veiculos (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         marca VARCHAR(100) NOT NULL,
         modelo VARCHAR(100) NOT NULL,
         ano INT NOT NULL,
@@ -100,6 +100,16 @@ export class DatabaseConnection {
 
     await this.execute(createUsuariosTable);
     await this.execute(createVeiculosTable);
+    
+    // Migração: Alterar tamanho das colunas id se necessário
+    try {
+      await this.execute('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
+      await this.execute('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
+    } catch (error) {
+      // Ignora erros se as colunas já estiverem no tamanho correto
+      console.log('Migração de colunas id já aplicada ou não necessária');
+    }
+    
     console.log('Schema do banco de dados MySQL inicializado');
   }
 }
