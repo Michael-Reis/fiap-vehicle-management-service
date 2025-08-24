@@ -9,7 +9,6 @@ import { swaggerUi, specs } from './infrastructure/swagger/swagger';
 import authRoutes from './infrastructure/http/routes/authRoutes';
 import veiculoRoutes from './infrastructure/http/routes/veiculoRoutes';
 import webhookRoutes from './infrastructure/http/routes/webhookRoutes';
-import { Logger } from './utils/logger';
 
 dotenv.config();
 
@@ -154,9 +153,7 @@ async function startServer() {
       await seed.criarAdminInicial();
       
     } catch (dbError) {
-      console.warn('Não foi possível conectar ao MySQL. Verifique se o XAMPP está rodando.');
-      console.warn('O serviço continuará funcionando, mas sem persistência de dados.');
-      console.warn('Para conectar ao MySQL: inicie o XAMPP e certifique-se que o MySQL está rodando');
+      console.log("Não foi possível conectar ao banco de dados:", dbError); 
     }
     
     app.listen(PORT, () => {

@@ -48,10 +48,6 @@ const options: swaggerJSDoc.Options = {
         name: 'Webhooks',
         description: 'Endpoints para receber notificações de pagamento'
       },
-      {
-        name: 'Health',
-        description: 'Verificação de saúde do serviço'
-      }
     ],
     components: {
       securitySchemes: {

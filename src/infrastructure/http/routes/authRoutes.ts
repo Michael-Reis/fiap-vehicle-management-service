@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/AuthController';
-import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 const authController = new AuthController();
@@ -9,47 +8,6 @@ const authController = new AuthController();
  * @swagger
  * components:
  *   schemas:
- *     RegistrarUsuarioInput:
- *       type: object
- *       required:
- *         - nome
- *         - email
- *         - senha
- *         - tipo
- *       properties:
- *         nome:
- *           type: string
- *           description: Nome completo do usuário
- *           example: "João Silva"
- *         email:
- *           type: string
- *           format: email
- *           description: Email do usuário
- *           example: "joao@exemplo.com"
- *         senha:
- *           type: string
- *           minLength: 6
- *           description: Senha do usuário
- *           example: "senha123"
- *         tipo:
- *           type: string
- *           enum: [ADMIN, CLIENTE]
- *           description: Tipo do usuário
- *           example: "CLIENTE"
- *         cpf:
- *           type: string
- *           pattern: "^[0-9]{11}$"
- *           description: CPF (obrigatório para clientes)
- *           example: "12345678901"
- *         telefone:
- *           type: string
- *           description: Telefone do usuário
- *           example: "(11) 99999-9999"
- *         endereco:
- *           type: string
- *           description: Endereço do usuário
- *           example: "Rua das Flores, 123"
- * 
  *     RegistrarClienteInput:
  *       type: object
  *       required:
@@ -136,38 +94,7 @@ const authController = new AuthController();
  *           example: "Login realizado com sucesso"
  */
 
-/**
- * @swagger
- * /api/auth/registrar:
- *   post:
- *     tags: [Autenticação]
- *     summary: Registrar um novo usuário (Admin ou Cliente)
- *     description: Endpoint para registrar um novo usuário no sistema
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RegistrarUsuarioInput'
- *     responses:
- *       201:
- *         description: Usuário registrado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 usuario:
- *                   $ref: '#/components/schemas/Usuario'
- *                 message:
- *                   type: string
- *                   example: "Usuário registrado com sucesso"
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- *       500:
- *         $ref: '#/components/responses/InternalError'
- */
-router.post('/registrar', authMiddleware, (req, res) => authController.registrar(req, res));
+// Rota /registrar removida - use /registrar-cliente para registros públicos
 
 /**
  * @swagger

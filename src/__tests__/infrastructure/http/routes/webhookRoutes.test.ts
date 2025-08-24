@@ -12,11 +12,9 @@ describe('WebhookRoutes Integration Tests', () => {
     
     // Mock dos métodos do controller
     mockWebhookController.processarPagamento = jest.fn();
-    mockWebhookController.obterStatusPagamento = jest.fn();
 
     // Configura mocks para retornar status de sucesso
     mockWebhookController.processarPagamento.mockResolvedValue();
-    mockWebhookController.obterStatusPagamento.mockResolvedValue();
   });
 
   describe('Router Configuration', () => {
@@ -46,23 +44,12 @@ describe('WebhookRoutes Integration Tests', () => {
       expect(postRoute).toBeDefined();
       expect(postRoute?.route?.path).toBe('/pagamento');
     });
-
-    test('deve ter rota GET /status/:veiculoId', () => {
-      const routes = webhookRoutes.stack;
-      const getRoute = routes.find(layer => 
-        layer.route && 
-        layer.route.path === '/status/:veiculoId'
-      );
-      
-      expect(getRoute).toBeDefined();
-      expect(getRoute?.route?.path).toBe('/status/:veiculoId');
-    });
   });
 
   describe('Route Structure Validation', () => {
-    test('deve ter exatamente 2 rotas configuradas', () => {
+    test('deve ter exatamente 1 rota configurada', () => {
       const routes = webhookRoutes.stack.filter(layer => layer.route);
-      expect(routes).toHaveLength(2);
+      expect(routes).toHaveLength(1);
     });
 
     test('rotas devem ter handlers válidos', () => {
@@ -82,17 +69,6 @@ describe('WebhookRoutes Integration Tests', () => {
   });
 
   describe('Route Parameters', () => {
-    test('rota de status deve aceitar parâmetro veiculoId', () => {
-      const routes = webhookRoutes.stack;
-      const statusRoute = routes.find(layer => 
-        layer.route && 
-        layer.route.path === '/status/:veiculoId'
-      );
-      
-      expect(statusRoute).toBeDefined();
-      expect(statusRoute?.route?.path).toContain(':veiculoId');
-    });
-
     test('rota de pagamento não deve ter parâmetros de URL', () => {
       const routes = webhookRoutes.stack;
       const pagamentoRoute = routes.find(layer => 
@@ -115,17 +91,6 @@ describe('WebhookRoutes Integration Tests', () => {
       
       expect(pagamentoRoute).toBeDefined();
       expect(pagamentoRoute?.route?.path).toBe('/pagamento');
-    });
-
-    test('rota status deve estar configurada', () => {
-      const routes = webhookRoutes.stack;
-      const statusRoute = routes.find(layer => 
-        layer.route && 
-        layer.route.path === '/status/:veiculoId'
-      );
-      
-      expect(statusRoute).toBeDefined();
-      expect(statusRoute?.route?.path).toBe('/status/:veiculoId');
     });
   });
 
