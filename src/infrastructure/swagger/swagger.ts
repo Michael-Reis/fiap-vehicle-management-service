@@ -31,7 +31,7 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3001',
+        url: 'http://localhost:3000',
         description: 'Servidor de Desenvolvimento'
       }
     ],
@@ -48,10 +48,6 @@ const options: swaggerJSDoc.Options = {
         name: 'Webhooks',
         description: 'Endpoints para receber notificações de pagamento'
       },
-      {
-        name: 'Health',
-        description: 'Verificação de saúde do serviço'
-      }
     ],
     components: {
       securitySchemes: {

@@ -9,20 +9,20 @@ import { swaggerUi, specs } from './infrastructure/swagger/swagger';
 import authRoutes from './infrastructure/http/routes/authRoutes';
 import veiculoRoutes from './infrastructure/http/routes/veiculoRoutes';
 import webhookRoutes from './infrastructure/http/routes/webhookRoutes';
-import { Logger } from './utils/logger';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
+
+
 
 app.use(helmet());
 app.use(cors(
   {
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: process.env.origins || '*', // Permitir todas as origens (ajustar conforme necessário)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
   }
 ));
 
@@ -153,9 +153,7 @@ async function startServer() {
       await seed.criarAdminInicial();
       
     } catch (dbError) {
-      console.warn('Não foi possível conectar ao MySQL. Verifique se o XAMPP está rodando.');
-      console.warn('O serviço continuará funcionando, mas sem persistência de dados.');
-      console.warn('Para conectar ao MySQL: inicie o XAMPP e certifique-se que o MySQL está rodando');
+      console.log("Não foi possível conectar ao banco de dados:", dbError); 
     }
     
     app.listen(PORT, () => {

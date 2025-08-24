@@ -1,6 +1,5 @@
 import authRoutes from '../../../../infrastructure/http/routes/authRoutes';
 import { AuthController } from '../../../../infrastructure/http/controllers/AuthController';
-import { authMiddleware } from '../../../../infrastructure/http/middlewares/authMiddleware';
 
 // Mock do middleware de autenticação
 jest.mock('../../../../infrastructure/http/middlewares/authMiddleware', () => ({
@@ -42,15 +41,15 @@ describe('AuthRoutes Integration Tests', () => {
   });
 
   describe('Route Definitions', () => {
-    test('deve ter rota POST /registrar', () => {
+    test('deve ter rota POST /registrar-cliente', () => {
       const routes = authRoutes.stack;
       const registrarRoute = routes.find(layer => 
         layer.route && 
-        layer.route.path === '/registrar'
+        layer.route.path === '/registrar-cliente'
       );
       
       expect(registrarRoute).toBeDefined();
-      expect(registrarRoute?.route?.path).toBe('/registrar');
+      expect(registrarRoute?.route?.path).toBe('/registrar-cliente');
     });
 
     test('deve ter rota POST /login', () => {
@@ -104,7 +103,7 @@ describe('AuthRoutes Integration Tests', () => {
         .filter(layer => layer.route)
         .map(layer => layer.route?.path);
       
-      expect(paths).toContain('/registrar');
+      expect(paths).toContain('/registrar-cliente');
       expect(paths).toContain('/login');
     });
   });
@@ -165,7 +164,7 @@ describe('AuthRoutes Integration Tests', () => {
         .map(layer => layer.route?.path);
       
       // Deve ter pelo menos os paths básicos
-      expect(paths).toContain('/registrar');
+      expect(paths).toContain('/registrar-cliente');
       expect(paths).toContain('/login');
     });
 
@@ -182,7 +181,7 @@ describe('AuthRoutes Integration Tests', () => {
       const routes = authRoutes.stack;
       const registrarRoute = routes.find(layer => 
         layer.route && 
-        layer.route.path === '/registrar'
+        layer.route.path === '/registrar-cliente'
       );
       
       expect(registrarRoute).toBeDefined();
@@ -233,7 +232,7 @@ describe('AuthRoutes Integration Tests', () => {
         .filter(layer => layer.route)
         .map(layer => layer.route?.path);
       
-      expect(paths).toContain('/registrar');
+      expect(paths).toContain('/registrar-cliente');
       expect(paths).toContain('/login');
       expect(paths).not.toContain('/registro'); // Evitar confusão
       expect(paths).not.toContain('/signin'); // Manter consistência

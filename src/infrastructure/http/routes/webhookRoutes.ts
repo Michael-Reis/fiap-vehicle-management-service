@@ -132,40 +132,4 @@ const webhookController = new WebhookController();
  */
 router.post('/pagamento', (req, res) => webhookController.processarPagamento(req, res));
 
-/**
- * @swagger
- * /api/webhook/status/{veiculoId}:
- *   get:
- *     tags: [Webhooks]
- *     summary: Consultar status de pagamento
- *     description: Consulta o status atual de pagamento de um veículo
- *     parameters:
- *       - in: path
- *         name: veiculoId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do veículo
- *         example: "1"
- *     responses:
- *       200:
- *         description: Status consultado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 veiculoId:
- *                   type: string
- *                 note:
- *                   type: string
- *       400:
- *         description: ID do veículo é obrigatório
- *       500:
- *         description: Erro interno do servidor
- */
-router.get('/status/:veiculoId', (req, res) => webhookController.obterStatusPagamento(req, res));
-
 export default router;
