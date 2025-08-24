@@ -1,0 +1,72 @@
+# Dependências
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de produção
+dist
+build
+
+# Arquivos de teste
+coverage
+*.tgz
+
+# Arquivos de configuração local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory usado pelo nyc
+.nyc_output
+
+# Arquivos temporários
+.tmp
+.temp
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+DOCKER.md
+
+# Documentação
+*.md
+README.md
+readme.md
+
+# Jest
+jest.config.js
+
+# SonarQube
+sonar-project.properties
+
+# Scripts de inicialização do banco
+init-db.sh
+init.sql

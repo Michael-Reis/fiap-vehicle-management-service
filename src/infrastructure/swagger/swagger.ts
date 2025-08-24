@@ -316,10 +316,15 @@ const options: swaggerJSDoc.Options = {
       }
     }
   },
-  apis: [
-    './src/infrastructure/http/routes/*.ts',
-    './src/index.ts'
-  ]
+  apis: process.env.NODE_ENV === 'production' 
+    ? [
+        './dist/infrastructure/http/routes/*.js',
+        './dist/index.js'
+      ]
+    : [
+        './src/infrastructure/http/routes/*.ts',
+        './src/index.ts'
+      ]
 };
 
 const specs = swaggerJSDoc(options);

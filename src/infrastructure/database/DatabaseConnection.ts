@@ -4,7 +4,7 @@ export class DatabaseConnection {
   private static instance: DatabaseConnection;
   private connection: mysql.Connection | null = null;
 
-  private constructor() {}
+  private constructor() { }
 
   static getInstance(): DatabaseConnection {
     if (!DatabaseConnection.instance) {
@@ -23,7 +23,7 @@ export class DatabaseConnection {
         port: parseInt(process.env.DB_PORT || '3306'),
         charset: 'utf8mb4'
       });
-      
+
       console.log('Conectado ao banco MySQL do serviço principal');
     } catch (error) {
       console.error('Erro ao conectar no MySQL:', error);
@@ -59,7 +59,7 @@ export class DatabaseConnection {
     // Tabela de usuários
     const createUsuariosTable = `
       CREATE TABLE IF NOT EXISTS usuarios (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
@@ -79,7 +79,7 @@ export class DatabaseConnection {
     // Tabela de veículos
     const createVeiculosTable = `
       CREATE TABLE IF NOT EXISTS veiculos (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         marca VARCHAR(100) NOT NULL,
         modelo VARCHAR(100) NOT NULL,
         ano INT NOT NULL,
@@ -100,6 +100,11 @@ export class DatabaseConnection {
 
     await this.execute(createUsuariosTable);
     await this.execute(createVeiculosTable);
+
+    // Migração: Alterar tamanho das colunas id se necessário
+    await this.execute('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
+    await this.execute('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
+
     console.log('Schema do banco de dados MySQL inicializado');
   }
 }

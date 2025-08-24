@@ -198,12 +198,16 @@ describe('DatabaseConnection', () => {
       await databaseConnection.connect();
       await databaseConnection.initializeSchema();
       
-      expect(mockConnection.execute).toHaveBeenCalledTimes(2);
+      expect(mockConnection.execute).toHaveBeenCalledTimes(4);
       
       // Verificar se as queries de criação de tabelas foram chamadas
       const calls = mockConnection.execute.mock.calls;
       expect(calls[0][0]).toContain('CREATE TABLE IF NOT EXISTS usuarios');
       expect(calls[1][0]).toContain('CREATE TABLE IF NOT EXISTS veiculos');
+      
+      // Verificar se as queries de migração foram chamadas
+      expect(calls[2][0]).toContain('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
+      expect(calls[3][0]).toContain('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
       
       expect(consoleSpy).toHaveBeenCalledWith('Schema do banco de dados MySQL inicializado');
       consoleSpy.mockRestore();
