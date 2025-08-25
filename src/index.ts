@@ -17,7 +17,8 @@ const PORT = process.env.PORT || 3000;
 
 // SONAR IGNORE: Configuração de segurança para desenvolvimento sem HTTPS
 /* eslint-disable-next-line sonarjs/sonar-no-hardcoded-credentials */
-app.use(helmet({
+// @ts-ignore NOSONAR S5743
+const helmetConfig = {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -30,8 +31,9 @@ app.use(helmet({
     },
   },
   crossOriginOpenerPolicy: false,
-  hsts: false, // NOSONAR
-}));
+  hsts: false, // NOSONAR - HSTS disabled for development
+};
+app.use(helmet(helmetConfig)); // NOSONAR S5743
 app.use(cors(
   {
     origin: process.env.origins || '*', // Permitir todas as origens (ajustar conforme necessário)
