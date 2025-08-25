@@ -3,10 +3,14 @@
 src/index.ts
 src/infrastructure/swagger/swagger.ts
 
-
 # Arquivos de teste que podem conter configurações menos seguras
 src/__tests__/**
 
 # Arquivos de configuração
 *.config.js
 *.config.ts
+
+# Arquivos de build e distribuição  
+dist/**
+coverage/**
+node_modules/**

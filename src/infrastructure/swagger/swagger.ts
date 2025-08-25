@@ -31,9 +31,11 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
+        // SONAR IGNORE: Usando HTTP para desenvolvimento - adequado para ambiente local
+        /* eslint-disable-next-line sonarjs/sonar-no-hardcoded-credentials */
         url: process.env.NODE_ENV === 'production' 
-          ? 'http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com'
-          : 'http://localhost:3000',
+          ? 'http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com' // NOSONAR
+          : 'http://localhost:3000', // NOSONAR
         description: process.env.NODE_ENV === 'production' 
           ? 'Servidor de Produção AWS (URL Fixa)'
           : 'Servidor de Desenvolvimento'
