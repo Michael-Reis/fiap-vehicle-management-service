@@ -16,6 +16,13 @@ provider "aws" {
 }
 
 # Variables
+variable "admin_password" {
+  description = "Password for the initial admin user"
+  type        = string
+  sensitive   = true
+  default     = "admin123"
+}
+
 variable "aws_region" {
   description = "AWS region"
   type        = string
@@ -239,6 +246,10 @@ resource "aws_ecs_task_definition" "app" {
         {
           name  = "DB_PASSWORD"
           value = "fiap123456"
+        },
+        {
+          name  = "ADMIN_PASSWORD"
+          value = var.admin_password
         }
       ]
     }

@@ -1,0 +1,16 @@
+# Terraform Variables Example
+# Copy this file to terraform.tfvars and configure your values
+
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Application Configuration
+app_name = "fiap-vehicle-management"
+environment = "prod"
+container_port = 3000
+
+# ECR Image URI (update with your actual ECR repository)
+ecr_image_uri = "497986631333.dkr.ecr.us-east-1.amazonaws.com/fiap-vehicle-management-service:latest"
+
+# Admin Password (keep this secure!)
+admin_password = "admin123"

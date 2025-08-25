@@ -14,6 +14,10 @@ export class DatabaseSeed {
     try {
       await this.db.connect();
       
+      // Usar senha configurada por variável de ambiente ou gerar uma temporária
+      const senhaAdmin = process.env.ADMIN_PASSWORD || this.gerarSenhaSegura();
+      const senhaHash = await bcrypt.hash(senhaAdmin, 10);
+      
       // Verificar se já existe um admin com o email padrão
       const adminExistente = await this.db.query(
         'SELECT id FROM usuarios WHERE email = ?',
@@ -21,16 +25,26 @@ export class DatabaseSeed {
       );
 
       if (adminExistente.length > 0) {
-        console.log('Admin inicial já existe. Seed não executado.');
+        // Admin já existe, vamos atualizar a senha
+        await this.db.query(
+          'UPDATE usuarios SET senha = ?, updated_at = NOW() WHERE email = ?',
+          [senhaHash, 'admin@admin.com.br']
+        );
+        
+        console.log('Admin inicial já existe - senha atualizada com sucesso!');
+        console.log('Email: admin@admin.com.br');
+        
+        if (process.env.ADMIN_PASSWORD) {
+          console.log('✅ Senha atualizada através da variável de ambiente ADMIN_PASSWORD');
+        } else {
+          console.log(`⚠️  Senha temporária atualizada: ${senhaAdmin}`);
+          console.log('⚠️  IMPORTANTE: Altere esta senha no primeiro login!');
+          console.log('💡 TIP: Configure a variável ADMIN_PASSWORD para definir uma senha fixa');
+        }
         return;
       }
 
-      // Gerar senha aleatória para admin inicial
-      const senhaTemporaria = this.gerarSenhaSegura();
-      const senhaHash = await bcrypt.hash(senhaTemporaria, 10);
-
       const id = 'admin_' + new Date().getTime(); // Gera um ID único baseado no timestamp  
-
 
       // Inserir admin inicial
       await this.db.query(
@@ -47,8 +61,14 @@ export class DatabaseSeed {
 
       console.log('Admin inicial criado com sucesso!');
       console.log('Email: admin@admin.com.br');
-      console.log(`Senha temporária: ${senhaTemporaria}`);
-      console.log('⚠️  IMPORTANTE: Altere esta senha no primeiro login!');
+      
+      if (process.env.ADMIN_PASSWORD) {
+        console.log('✅ Senha definida através da variável de ambiente ADMIN_PASSWORD');
+      } else {
+        console.log(`⚠️  Senha temporária gerada: ${senhaAdmin}`);
+        console.log('⚠️  IMPORTANTE: Altere esta senha no primeiro login!');
+        console.log('💡 TIP: Configure a variável ADMIN_PASSWORD para definir uma senha fixa');
+      }
       
     } catch (error) {
       console.error('Erro ao criar admin inicial:', error);

@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.61% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/39</span>
+                <span class='fraction'>36/42</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.21% </span>
+                <span class="strong">85.36% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>32/38</span>
+                <span class='fraction'>35/41</span>
             </div>
         
             
@@ -151,7 +151,20 @@
 <a name='L86'></a><a href='#L86'>86</a>
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -181,6 +194,9 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -193,6 +209,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -201,6 +218,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -208,6 +229,9 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
@@ -242,6 +266,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { DatabaseConnection } from './DatabaseConnection';
 import * as bcrypt from 'bcrypt';
 import { TipoUsuario } from '../../domain/entities/Usuario';
+import { randomBytes } from 'crypto';
 &nbsp;
 export class DatabaseSeed {
   private db: DatabaseConnection;
@@ -269,11 +294,15 @@ export class DatabaseSeed {
       const senhaTemporaria = this.gerarSenhaSegura();
       const senhaHash = await bcrypt.hash(senhaTemporaria, 10);
 &nbsp;
+      const id = 'admin_' + new Date().getTime(); // Gera um ID único baseado no timestamp  
+&nbsp;
+&nbsp;
       // Inserir admin inicial
       await this.db.query(
-        `INSERT INTO usuarios (nome, email, senha, tipo, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, NOW(), NOW())`,
+        `INSERT INTO usuarios (id, nome, email, senha, tipo, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
         [
+          id,
           'Administrador Sistema',
           'admin@admin.com.br',
           senhaHash,
@@ -292,11 +321,18 @@ export class DatabaseSeed {
     }
   }
 &nbsp;
+  /**
+   * Gera uma senha segura usando gerador criptográfico
+   * Substitui Math.random() por crypto.randomBytes para segurança
+   */
   private gerarSenhaSegura(): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&amp;*';
     let senha = '';
+    const randomBytesArray = randomBytes(12); // Gera 12 bytes criptograficamente seguros
+    
     for (let i = 0; i &lt; 12; i++) {
-      senha += charset.charAt(Math.floor(Math.random() * charset.length));
+      // Usa bytes seguros em vez de Math.random()
+      senha += charset.charAt(randomBytesArray[i] % charset.length);
     }
     return senha;
   }
@@ -334,7 +370,7 @@ export class DatabaseSeed {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-19T07:48:28.567Z
+                at 2025-08-25T02:51:15.494Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
