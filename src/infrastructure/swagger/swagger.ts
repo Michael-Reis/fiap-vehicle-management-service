@@ -31,8 +31,12 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Servidor de Desenvolvimento'
+        url: process.env.NODE_ENV === 'production' 
+          ? 'http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' 
+          ? 'Servidor de Produção AWS (URL Fixa)'
+          : 'Servidor de Desenvolvimento'
       }
     ],
     tags: [
