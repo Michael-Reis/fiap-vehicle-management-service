@@ -8,7 +8,7 @@ const options: swaggerJSDoc.Options = {
       title: 'Serviço Principal - Gestão de Veículos',
       version: '1.0.0',
       description: `
-        API para gestão de veículos do sistema de revenda automotiva s2
+        API para gestão de veículos do sistema de revenda automotiva
         
         ## Funcionalidades
         - Cadastro e gestão de veículos
