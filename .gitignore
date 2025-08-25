@@ -26,8 +26,8 @@ Thumbs.db
 # VS Code
 .vscode/
 
-# Coverage (ignorar HTML reports, mas manter lcov.info para SonarQube)
-coverage/
+# Coverage (ignorar tudo exceto lcov.info para SonarQube)
+coverage/*
 !coverage/lcov.info
 
 # XAMPP
