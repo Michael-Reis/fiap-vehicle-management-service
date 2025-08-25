@@ -8,7 +8,7 @@ const options: swaggerJSDoc.Options = {
       title: 'Serviço Principal - Gestão de Veículos',
       version: '1.0.0',
       description: `
-        API para gestão de veículos do sistema de revenda automotiva.
+        API para gestão de veículos do sistema de revenda automotiva s2
         
         ## Funcionalidades
         - Cadastro e gestão de veículos
@@ -31,8 +31,12 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Servidor de Desenvolvimento'
+        url: process.env.NODE_ENV === 'production' 
+          ? 'http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' 
+          ? 'Servidor de Produção AWS (URL Fixa)'
+          : 'Servidor de Desenvolvimento'
       }
     ],
     tags: [

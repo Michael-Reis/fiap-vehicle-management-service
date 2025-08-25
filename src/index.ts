@@ -17,7 +17,21 @@ const PORT = process.env.PORT || 3000;
 
 
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+      imgSrc: ["'self'", "data:", "https:"],
+      fontSrc: ["'self'", "https:", "data:"],
+      connectSrc: ["'self'", "http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com", "http://localhost:3000"],
+      upgradeInsecureRequests: null,
+    },
+  },
+  crossOriginOpenerPolicy: false,
+  hsts: false,
+}));
 app.use(cors(
   {
     origin: process.env.origins || '*', // Permitir todas as origens (ajustar conforme necessário)

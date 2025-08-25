@@ -26,7 +26,9 @@ Thumbs.db
 # VS Code
 .vscode/
 
+# Coverage (ignorar HTML reports, mas manter lcov.info para SonarQube)
 coverage/
+!coverage/lcov.info
 
 # XAMPP
 xampp/
@@ -37,3 +39,16 @@ xampp/
 
 # Swagger
 swagger-output.json
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
+*.tfstate.*
+.terraform/providers/
+.terraform/modules/
+
+# AWS
+.aws/

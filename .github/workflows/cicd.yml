@@ -66,3 +66,99 @@ jobs:
           name: build-files
           path: dist/
           retention-days: 7
+
+  docker:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: private
+          
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: 497986631333.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: fiap-vehicle-management-service
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+      - name: Output image URI
+        env:
+          ECR_REGISTRY: 497986631333.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: fiap-vehicle-management-service
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "Image URI: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "Latest URI: $ECR_REGISTRY/$ECR_REPOSITORY:latest"
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+  deploy:
+    name: Deploy to AWS ECS
+    runs-on: ubuntu-latest
+    needs: [test, build, docker]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Deploy to Amazon ECS
+        env:
+          ECS_CLUSTER: fiap-vehicle-management-cluster
+          ECS_SERVICE: fiap-vehicle-management-service
+        run: |
+          echo "🚀 Deploying to ECS cluster: $ECS_CLUSTER"
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment \
+            --region us-east-1
+          
+          echo "⏳ Waiting for deployment to complete..."
+          aws ecs wait services-stable \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --region us-east-1
+          
+          echo "✅ Deployment completed successfully!"
+      
+      - name: Verify deployment
+        run: |
+          ALB_URL="http://fiap-vehicle-management-alb-1408414491.us-east-1.elb.amazonaws.com"
+          echo "🔍 Verifying deployment at: $ALB_URL/health"
+          
+          sleep 30
+          
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $ALB_URL/health)
+          if [ $HEALTH_STATUS -eq 200 ]; then
+            echo "✅ Health check passed! Service is running correctly."
+            echo "🌐 Swagger UI: $ALB_URL/api-docs" 
+            echo "💚 Health endpoint: $ALB_URL/health"
+            echo "🚗 API: $ALB_URL/api/veiculos"
+          else
+            echo "❌ Health check failed! HTTP status: $HEALTH_STATUS"
+            exit 1
+          fi
