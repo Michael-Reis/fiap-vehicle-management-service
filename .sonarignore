@@ -1,6 +1,8 @@
 # Ignorar avisos de segurança específicos para desenvolvimento
 # Arquivos de configuração de desenvolvimento que usam HTTP
 src/index.ts
+src/infrastructure/swagger/swagger.ts
+
 
 # Arquivos de teste que podem conter configurações menos seguras
 src/__tests__/**
