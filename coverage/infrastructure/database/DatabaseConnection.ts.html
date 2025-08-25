@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>28/28</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>28/28</span>
             </div>
         
             
@@ -168,9 +168,14 @@
 <a name='L103'></a><a href='#L103'>103</a>
 <a name='L104'></a><a href='#L104'>104</a>
 <a name='L105'></a><a href='#L105'>105</a>
-<a name='L106'></a><a href='#L106'>106</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">18x</span>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,15 +214,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -270,6 +275,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -279,7 +289,7 @@ export class DatabaseConnection {
   private static instance: DatabaseConnection;
   private connection: mysql.Connection | null = null;
 &nbsp;
-  private constructor() {}
+  private constructor() { }
 &nbsp;
   static getInstance(): DatabaseConnection {
     if (!DatabaseConnection.instance) {
@@ -298,7 +308,7 @@ export class DatabaseConnection {
         port: parseInt(process.env.DB_PORT || '3306'),
         charset: 'utf8mb4'
       });
-      
+&nbsp;
       console.log('Conectado ao banco MySQL do serviço principal');
     } catch (error) {
       console.error('Erro ao conectar no MySQL:', error);
@@ -334,7 +344,7 @@ export class DatabaseConnection {
     // Tabela de usuários
     const createUsuariosTable = `
       CREATE TABLE IF NOT EXISTS usuarios (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
@@ -354,7 +364,7 @@ export class DatabaseConnection {
     // Tabela de veículos
     const createVeiculosTable = `
       CREATE TABLE IF NOT EXISTS veiculos (
-        id VARCHAR(36) PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         marca VARCHAR(100) NOT NULL,
         modelo VARCHAR(100) NOT NULL,
         ano INT NOT NULL,
@@ -375,6 +385,11 @@ export class DatabaseConnection {
 &nbsp;
     await this.execute(createUsuariosTable);
     await this.execute(createVeiculosTable);
+&nbsp;
+    // Migração: Alterar tamanho das colunas id se necessário
+    await this.execute('ALTER TABLE usuarios MODIFY COLUMN id VARCHAR(50)');
+    await this.execute('ALTER TABLE veiculos MODIFY COLUMN id VARCHAR(50)');
+&nbsp;
     console.log('Schema do banco de dados MySQL inicializado');
   }
 }
@@ -385,7 +400,7 @@ export class DatabaseConnection {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-19T06:12:17.613Z
+                at 2025-08-25T02:51:15.522Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

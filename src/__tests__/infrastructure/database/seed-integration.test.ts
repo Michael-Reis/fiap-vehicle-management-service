@@ -86,15 +86,19 @@ describe('DatabaseSeed - Testes de Integração Simples', () => {
       );
     });
 
-    test('deve pular criação quando admin já existe', async () => {
+    test('deve atualizar senha quando admin já existe', async () => {
       jest.spyOn(databaseConnection, 'connect').mockResolvedValue(undefined);
-      jest.spyOn(databaseConnection, 'query').mockResolvedValue([{ id: 1 }]); // Admin já existe
+      jest.spyOn(databaseConnection, 'query')
+        .mockResolvedValueOnce([{ id: 1 }]) // Admin já existe (primeira consulta)
+        .mockResolvedValueOnce(undefined); // Update bem-sucedido (segunda consulta)
       
       await databaseSeed.criarAdminInicial();
       
-      expect(console.log).toHaveBeenCalledWith('Admin inicial já existe. Seed não executado.');
-      // Como o beforeEach roda antes de cada teste, pode haver múltiplas chamadas
-      expect(databaseConnection.query).toHaveBeenCalled();
+      expect(console.log).toHaveBeenCalledWith('Admin inicial já existe - senha atualizada com sucesso!');
+      expect(databaseConnection.query).toHaveBeenCalledWith(
+        'UPDATE usuarios SET senha = ?, updated_at = NOW() WHERE email = ?',
+        expect.any(Array)
+      );
     });
   });
 });

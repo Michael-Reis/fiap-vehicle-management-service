@@ -64,16 +64,54 @@ describe('DatabaseSeed - Coverage', () => {
       expect(consoleSpy).toHaveBeenCalledWith('Admin inicial criado com sucesso!');
     });
 
-    it('deve pular criação quando admin já existe', async () => {
+    it('deve atualizar senha quando admin já existe', async () => {
+      const originalEnv = process.env.ADMIN_PASSWORD;
+      process.env.ADMIN_PASSWORD = 'admin123';
+
       mockDb.connect.mockResolvedValueOnce(undefined);
       mockDb.query.mockResolvedValueOnce([{ id: '1' }]); // Admin já existe
+      mockDb.query.mockResolvedValueOnce(undefined); // Update bem-sucedido
 
       await seed.criarAdminInicial();
 
       expect(mockDb.connect).toHaveBeenCalled();
-      expect(mockDb.query).toHaveBeenCalledTimes(1); // Apenas verificação
-      expect(bcrypt.hash).not.toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith('Admin inicial já existe. Seed não executado.');
+      expect(mockDb.query).toHaveBeenCalledTimes(2); // Verificação + Update
+      expect(mockDb.query).toHaveBeenCalledWith(
+        'UPDATE usuarios SET senha = ?, updated_at = NOW() WHERE email = ?',
+        ['hashed_password', 'admin@admin.com.br']
+      );
+      expect(bcrypt.hash).toHaveBeenCalledWith('admin123', 10);
+      expect(consoleSpy).toHaveBeenCalledWith('Admin inicial já existe - senha atualizada com sucesso!');
+      expect(consoleSpy).toHaveBeenCalledWith('✅ Senha atualizada através da variável de ambiente ADMIN_PASSWORD');
+
+      // Restaurar variável de ambiente
+      if (originalEnv !== undefined) {
+        process.env.ADMIN_PASSWORD = originalEnv;
+      } else {
+        delete process.env.ADMIN_PASSWORD;
+      }
+    });
+
+    it('deve atualizar senha com senha gerada quando admin já existe e ADMIN_PASSWORD não definida', async () => {
+      const originalEnv = process.env.ADMIN_PASSWORD;
+      delete process.env.ADMIN_PASSWORD;
+
+      mockDb.connect.mockResolvedValueOnce(undefined);
+      mockDb.query.mockResolvedValueOnce([{ id: '1' }]); // Admin já existe
+      mockDb.query.mockResolvedValueOnce(undefined); // Update bem-sucedido
+
+      await seed.criarAdminInicial();
+
+      expect(mockDb.connect).toHaveBeenCalled();
+      expect(mockDb.query).toHaveBeenCalledTimes(2); // Verificação + Update
+      expect(bcrypt.hash).toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith('Admin inicial já existe - senha atualizada com sucesso!');
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('⚠️  Senha temporária atualizada:'));
+
+      // Restaurar variável de ambiente
+      if (originalEnv !== undefined) {
+        process.env.ADMIN_PASSWORD = originalEnv;
+      }
     });
 
     it('deve lançar erro quando falha na criação', async () => {
@@ -84,6 +122,48 @@ describe('DatabaseSeed - Coverage', () => {
       await expect(seed.criarAdminInicial()).rejects.toThrow(errorMessage);
 
       expect(console.error).toHaveBeenCalledWith('Erro ao criar admin inicial:', expect.any(Error));
+    });
+
+    it('deve usar senha da variável de ambiente ADMIN_PASSWORD quando definida', async () => {
+      const originalEnv = process.env.ADMIN_PASSWORD;
+      process.env.ADMIN_PASSWORD = 'admin123';
+
+      mockDb.connect.mockResolvedValueOnce(undefined);
+      mockDb.query.mockResolvedValueOnce([]); // Admin não existe
+      mockDb.query.mockResolvedValueOnce(undefined); // Insert bem-sucedido
+
+      await seed.criarAdminInicial();
+
+      expect(bcrypt.hash).toHaveBeenCalledWith('admin123', 10);
+      expect(consoleSpy).toHaveBeenCalledWith('✅ Senha definida através da variável de ambiente ADMIN_PASSWORD');
+
+      // Restaurar variável de ambiente
+      if (originalEnv !== undefined) {
+        process.env.ADMIN_PASSWORD = originalEnv;
+      } else {
+        delete process.env.ADMIN_PASSWORD;
+      }
+    });
+
+    it('deve gerar senha aleatória quando ADMIN_PASSWORD não está definida', async () => {
+      const originalEnv = process.env.ADMIN_PASSWORD;
+      delete process.env.ADMIN_PASSWORD;
+
+      mockDb.connect.mockResolvedValueOnce(undefined);
+      mockDb.query.mockResolvedValueOnce([]); // Admin não existe
+      mockDb.query.mockResolvedValueOnce(undefined); // Insert bem-sucedido
+
+      await seed.criarAdminInicial();
+
+      expect(bcrypt.hash).toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('⚠️  Senha temporária gerada:'));
+      expect(consoleSpy).toHaveBeenCalledWith('⚠️  IMPORTANTE: Altere esta senha no primeiro login!');
+      expect(consoleSpy).toHaveBeenCalledWith('💡 TIP: Configure a variável ADMIN_PASSWORD para definir uma senha fixa');
+
+      // Restaurar variável de ambiente
+      if (originalEnv !== undefined) {
+        process.env.ADMIN_PASSWORD = originalEnv;
+      }
     });
   });
 
