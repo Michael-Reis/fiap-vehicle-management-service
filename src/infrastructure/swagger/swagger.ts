@@ -16,7 +16,7 @@ const options: swaggerJSDoc.Options = {
         - Controle de status (disponível/vendido)
         - Webhooks de pagamento
         - Consultas de disponibilidade
-        - Olá professor!
+        - Olá professor! sorria que você está sendo filmado!
         
         ## Arquitetura
         Este serviço utiliza **Arquitetura Hexagonal** (Clean Architecture) com **TypeScript** e **Express.js**.
